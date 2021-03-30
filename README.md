@@ -7,8 +7,8 @@ It makes use of project [go-archetype](https://github.com/rantav/go-archetype/wo
 ## Getting started
 
 ```bash
-go install github.com/bmfs/skaphos
-skaphos create github.com/rantav/go-template
+go install github.com/bmfs/skaphos@latest
+skaphos create https://github.com/rantav/go-template
 ```
 
 ## Create a template
