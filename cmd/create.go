@@ -7,6 +7,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var checkout *string
+
 // createCmd scaffolds a new project based on a template
 var createCmd = &cobra.Command{
 	Use:   "create <source> [<destination>]",
@@ -18,7 +20,7 @@ var createCmd = &cobra.Command{
 		if len(args) >= 2 {
 			destination = args[1]
 		}
-		err := creator.Create(source, destination)
+		err := creator.Create(source, destination, *checkout)
 		if err != nil {
 			log.Fatalf("failed to create: %s", err)
 		}
@@ -27,4 +29,6 @@ var createCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(createCmd)
+
+	checkout = createCmd.Flags().StringP("checkout", "c", "", "branch, tag or commit to checkout after git clone")
 }

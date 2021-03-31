@@ -15,7 +15,7 @@ import (
 
 // Create a new project based on the source template.
 // If source is a git repository, it will be fetched.
-func Create(source, destination string) error {
+func Create(source, destination, checkout string) error {
 
 	tempDir, err := ioutil.TempDir(os.TempDir(), "skaphos-*")
 	if err != nil {
@@ -24,7 +24,9 @@ func Create(source, destination string) error {
 	defer os.Remove(tempDir)
 
 	if isGit(source) { // clone
-		git.Clone(source, tempDir)
+		git.Clone(source, tempDir, git.CloneOptions{
+			Branch: checkout,
+		})
 	} else if !pathExists(source) {
 		return fmt.Errorf("source path does not exist")
 	}
