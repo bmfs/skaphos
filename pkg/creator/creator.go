@@ -16,22 +16,30 @@ import (
 // Create a new project based on the source template.
 // If source is a git repository, it will be fetched.
 func Create(source, destination, checkout string) error {
-
 	tempDir, err := ioutil.TempDir(os.TempDir(), "skaphos-*")
 	if err != nil {
 		return err
 	}
 	defer os.Remove(tempDir)
 
+	var sourceDir string
 	if isGit(source) { // clone
+
 		git.Clone(source, tempDir, git.CloneOptions{
 			Branch: checkout,
 		})
-	} else if !pathExists(source) {
-		return fmt.Errorf("source path does not exist")
+
+		sourceDir = tempDir
+
+	} else {
+		if !pathExists(source) {
+			return fmt.Errorf("source path does not exist")
+		}
+		sourceDir = source
 	}
 
-	transformFile := path.Join(tempDir, "transformations.yml")
+	transformFile := path.Join(sourceDir, "transformations.yml")
+
 	destination, err = filepath.Abs(destination)
 	if err != nil {
 		return fmt.Errorf("invalid destination")
@@ -47,7 +55,7 @@ func Create(source, destination, checkout string) error {
 		return fmt.Errorf("source does not have a `transformations.yml` file")
 	}
 
-	return generator.Generate(transformFile, tempDir, destination, []string{})
+	return generator.Generate(transformFile, sourceDir, destination, []string{})
 }
 
 func isGit(source string) bool {
